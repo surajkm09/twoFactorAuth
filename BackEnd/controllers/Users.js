@@ -47,7 +47,7 @@ module.exports.saveUser=function(req,res){
     user.username = req.body.username ; 
     user.password = req.body.password ; 
     user.twoFactorAuthEnabled = false ;
-    user.save((err,res)=>{
+    user.save((err,result)=>{
         if(err) throw err   
         console.log('saved')
         res.send({
