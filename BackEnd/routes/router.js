@@ -8,7 +8,7 @@ var Users = require('../controllers/Users')
 router.post('/authenticate',Users.authUser)
 
 
-router.post('/verify',Users.verifyTwoFact);
+//router.post('/verify',Users.verifyTwoFact);
 
 router.post('/register',Users.saveUser)
 

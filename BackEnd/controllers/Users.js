@@ -18,18 +18,55 @@ module.exports.authUser = function(req,res){
         else {
             if(user.validatePassword(req.body.password))
             {
-                data ={
-                    success:true,
-                    token:user._id 
+                if(!user.twoFactorAuthEnabled){
+                    secret = speakEasy.generateSecret({secret:'base32',name:"my app"});
+                    qrCode.toDataURL(secret.otpauth_url,function(error,data){
+                        if(error) throw error ;
+                        User.findByIdAndUpdate(user._id,{$set:{twoFactorAuthEnabled:true,secretkey:secret.base32}},(err,res)=>{
+                            if(err) throw err ; 
+                            console.log('updated')
+                        })
+                        res.send({
+                            success:true , 
+                            requiresQr:true , 
+                            image :data
+                        })
+                    })
+                    
+    
+                }
+                else {
+                    if(req.body.otp === undefined)
+                    {
+                        res.send({
+                            success:true ,
+                            message:"otp required"
+                        })
+                    }
+                    else {
+                        var actualOTP =  speakEasy.totp({
+                            secret:user.secretkey,
+                            encoding:'base32',
+                        })
+                        if(req.body.otp === actualOTP)
+                        {
+                            res.json({
 
-                } ;
-                console.log(data)
-                res.json({
-                    success:true,
-                    token: user._id 
+                                success:true ,
+                                token:user._id
 
-                })
-               // res.redirect('/verify')
+                            });
+                        }
+                        else{
+                            res.json({
+                                success:false ,
+                                message:'otp is wrong'
+                            })
+                        }
+
+                    }
+
+                }
             }
             else {
                 res.send({success:false ,message:"authentication failed "});
@@ -47,11 +84,12 @@ module.exports.saveUser=function(req,res){
     user.username = req.body.username ; 
     user.password = req.body.password ; 
     user.twoFactorAuthEnabled = false ;
-    user.save((err,res)=>{
+    user.save((err,result)=>{
         if(err) throw err   
         console.log('saved')
         res.send({
             success:true
+            
         })
 
     })
