@@ -1,0 +1,78 @@
+<md-card class="loginCard">
+    <toaster-container toaster-options="{'time-out': 1000}"></toaster-container>
+    <md-card-header class="headerAndFooter"> 
+        <md-card-header-text layout-align="center center">
+          <span class="md-title"
+            ><h1>Login</h1></span
+          >
+        </md-card-header-text>
+      </md-card-header>
+
+
+  <md-card-content>
+    <form name="loginForm">
+      <div layout-gt-sm="row">
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>User Name</label>
+          <input
+            md-maxlength="30"
+            required
+            name="userName"
+            ng-model="user.userName"
+          />
+
+          <div class="hint" ng-if="showHints">
+            Tell us what we should call you!
+          </div>
+
+          <div ng-messages="loginForm.userName.$error">
+            <div ng-message="required">User Name is required.</div>
+          </div>
+        </md-input-container>
+      </div>
+      <div layout-gt-sm="row">
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>password</label>
+          <input
+            md-maxlength="30"
+            type="password"
+            required
+            name="password"
+            ng-model="user.password"
+          />
+
+          <div ng-messages="loginForm.password.$error">
+            <div ng-message="required">password is required</div>
+          </div>
+        </md-input-container>
+      </div>
+      <div layout-gt-sm="row" ng-show="showOTP" layout-align="center">
+        <img src="{{QrCode}}">
+      </div>
+      <div layout-gt-sm="row" ng-show="showOTP">
+        <md-input-container class="md-block" flex-gt-sm>
+          <label>otp</label>
+          <input
+            md-maxlength="6"
+            type="password"
+            required
+            name="otp"
+            ng-model="user.otp"
+          />
+
+          <div ng-messages="loginForm.otp.$error">
+            <div ng-message="required">otp is required</div>
+          </div>
+        </md-input-container>
+      </div>
+    </form>
+  </md-card-content>
+  <md-card-actions layout="row" layout-align="center">
+    <md-button class="md-raised md-primary" ng-click="onLogin()">
+      Login
+    </md-button>
+  </md-card-actions>
+  <md-card-footer class="headerAndFooter">
+      {{message}}
+  </md-card-footer>
+</md-card>
